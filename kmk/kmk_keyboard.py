@@ -477,8 +477,6 @@ class KMKKeyboard:
             if self.hid_pending:
                 self._send_hid()
 
-            self.sandbox.last_received_report = self._receive_hid()
-
             self._old_timeouts_len = len(self._timeouts)
             self._process_timeouts()
             self._new_timeouts_len = len(self._timeouts)
@@ -487,6 +485,8 @@ class KMKKeyboard:
                 self.state_changed = True
                 if self.hid_pending:
                     self._send_hid()
+
+            self.sandbox.last_received_report = self._receive_hid()
 
             self.after_hid_send()
 
