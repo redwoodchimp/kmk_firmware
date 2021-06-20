@@ -10,6 +10,7 @@ class Sandbox:
     matrix_update = None
     secondary_matrix_update = None
     active_layers = None
+    last_received_report = None
 
 
 class KMKKeyboard:
@@ -112,6 +113,9 @@ class KMKKeyboard:
     def _send_hid(self):
         self._hid_helper.create_report(self.keys_pressed).send()
         self.hid_pending = False
+    
+    def _receive_hid(self):
+        return self._hid_helper.receive()
 
     def _handle_matrix_report(self, update=None):
         if update is not None:
@@ -472,6 +476,8 @@ class KMKKeyboard:
 
             if self.hid_pending:
                 self._send_hid()
+
+            self.sandbox.last_received_report = self._receive_hid()
 
             self._old_timeouts_len = len(self._timeouts)
             self._process_timeouts()
