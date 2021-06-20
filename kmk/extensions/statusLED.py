@@ -26,9 +26,10 @@ class statusLED(Extension):
 
     def after_matrix_scan(self, sandbox):
         if sandbox.last_received_report is not None:
-            if sandbox.last_received_report == b'\x01':
+            #This should only check the bit that corresponds to each key, for caps I beleive it is the second bit
+            if sandbox.last_received_report == b'\x01' and self.capsLed.value:
                 self.capsLed.value = False
-            elif sandbox.last_received_report == b'\x03':
+            elif sandbox.last_received_report == b'\x03'and not self.capsLed.value:
                 self.capsLed.value = True
         return
 
