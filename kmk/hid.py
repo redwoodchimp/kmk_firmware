@@ -1,8 +1,7 @@
 import usb_hid
 from micropython import const
-
-from kmk.keys import FIRST_KMK_INTERNAL_KEY, ConsumerKey, ModifierKey
 from storage import getmount
+from kmk.keys import FIRST_KMK_INTERNAL_KEY, ConsumerKey, ModifierKey
 
 try:
     from adafruit_ble import BLERadio
@@ -11,7 +10,6 @@ try:
 except ImportError:
     # BLE not supported on this platform
     pass
-
 
 class HIDModes:
     NOOP = 0  # currently unused; for testing?
@@ -269,7 +267,7 @@ class BLEHID(AbstractHID):
     @property
     def devices(self):
         '''Search through the provided list of devices to find the ones with the
-            send_report attribute.'''
+        send_report attribute.'''
         if not self.ble.connected:
             return []
 
