@@ -1,8 +1,6 @@
 import usb_hid
 from micropython import const
-
 from storage import getmount
-
 from kmk.keys import FIRST_KMK_INTERNAL_KEY, ConsumerKey, ModifierKey
 
 try:
@@ -12,7 +10,6 @@ try:
 except ImportError:
     # BLE not supported on this platform
     pass
-
 
 class HIDModes:
     NOOP = 0  # currently unused; for testing?
@@ -129,6 +126,12 @@ class AbstractHID:
 
         return self
 
+    def hid_receive(self):
+        pass
+
+    def receive(self):
+        return self.hid_receive()
+
     def clear_all(self):
         for idx, _ in enumerate(self.report_keys):
             self.report_keys[idx] = 0x00
@@ -232,6 +235,10 @@ class USBHID(AbstractHID):
         return self.devices[reporting_device_const].send_report(
             evt[1 : HID_REPORT_SIZES[reporting_device_const] + 1]
         )
+    
+    def hid_receive(self):
+        reporting_device_const = self.report_device[0]
+        return self.devices[reporting_device_const].last_received_report
 
 
 class BLEHID(AbstractHID):

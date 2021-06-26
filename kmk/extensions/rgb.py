@@ -1,5 +1,4 @@
 import neopixel
-
 import time
 from math import e, exp, pi, sin
 
