@@ -7,11 +7,11 @@ from kmk.extensions.oled import OLED
 from kmk.extensions.boardLED import boardLED
 from kmk.extensions.statusLED import statusLED
 from kmk.modules.layers import Layers
+from kmk.modules.power import Power
 from kmk.keys import KC
 
 from kmk.kmk_keyboard import KMKKeyboard as _KMKKeyboard
 from kmk.matrix import DiodeOrientation
-
 
 class KMKKeyboard(_KMKKeyboard):
     #Raspberry Pi Pico based keyboard
@@ -20,14 +20,16 @@ class KMKKeyboard(_KMKKeyboard):
     diode_orientation = DiodeOrientation.COLUMNS
     i2c = I2C(scl=board.GP1, sda=board.GP0)
     ledPin = board.GP25 #This is the on board led
-    capsLedPin = board.GP28
+    capsLockPin = board.GP28
     powersave_pin = board.GP23
 
 
 keyboard  = KMKKeyboard()
 oledanimation = frames()
-layers_ext = Layers()
-statusLED_ext = statusLED(capsLedPin=keyboard.capsLedPin)
+oled_ext = OLED(i2c=keyboard.i2c, frames=oledanimation.borpa2, enableText=True)
+layers_mod = Layers()
+power_mod = Power(keyboard.powersave_pin)
+statusLED_ext = statusLED(capsLockPin=keyboard.capsLockPin)
 boardLED_ext = boardLED(keyboard.ledPin)
 
 _______ = KC.TRNS
@@ -63,9 +65,7 @@ keyboard.keymap = [ #pi75 - Keymap
     '''
 ]
 
-oled_ext = OLED(i2c=keyboard.i2c, frames=oledanimation.borpa2, enableText=True)
-
-keyboard.extensions = [oled_ext, layers_ext, boardLED_ext, statusLED_ext]
+keyboard.extensions = [oled_ext, layers_mod, power_mod, boardLED_ext, statusLED_ext]
 
 if __name__ == '__main__':
     keyboard.go()
