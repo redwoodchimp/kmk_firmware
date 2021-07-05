@@ -5,9 +5,17 @@ from kmk.extensions import Extension
 class statusLED(Extension):
     def __init__(
         self,
-        capsLedPin=None
-    ):
-        self.capsLedPin = capsLedPin
+        numLockPin=None,
+        capsLockPin=None,
+        scrollLockPin=None,
+    ):  
+        self.numLockPin = numLockPin
+        self.capsLockPin = capsLockPin
+        self.scrollLockPin= scrollLockPin
+
+        self.enabled = [False] * 4
+        self.enabledOld = [False] * 4
+        
 
     def on_runtime_enable(self, sandbox):
         return
@@ -16,9 +24,17 @@ class statusLED(Extension):
         return
 
     def during_bootup(self, sandbox):
-        if self.capsLedPin is not None:
-            self.capsLed = digitalio.DigitalInOut(self.capsLedPin)
-            self.capsLed.direction = digitalio.Direction.OUTPUT
+        if self.numLockPin is not None:
+            self.numLockLED = digitalio.DigitalInOut(self.numLockPin)
+            self.numLockLED.direction = digitalio.Direction.OUTPUT
+
+        if self.capsLockPin is not None:
+            self.capsLockLED = digitalio.DigitalInOut(self.capsLockPin)
+            self.capsLockLED.direction = digitalio.Direction.OUTPUT
+
+        if self.scrollLockPin is not None:
+            self.scrollLockLED = digitalio.DigitalInOut(self.scrollLockPin)
+            self.scrollLockLED.direction = digitalio.Direction.OUTPUT
         return
 
     def before_matrix_scan(self, sandbox):
@@ -32,11 +48,29 @@ class statusLED(Extension):
 
     def after_hid_send(self, sandbox):
         if sandbox.last_received_report is not None:
-            #This should only check the bit that corresponds to each key, for caps I beleive it is the second bit
-            if sandbox.last_received_report == b'\x01' and self.capsLed.value:
-                self.capsLed.value = False
-            elif sandbox.last_received_report == b'\x03' and not self.capsLed.value:
-                self.capsLed.value = True
+            #First bit is num lock
+            #Second is caps lock
+            #Third is scroll lock
+            
+            #I don't think this is ideal but it works
+            bits = bin(sandbox.last_received_report[0])[2:]
+            byte = '0' * (4 - len(bits)) + bits
+            
+            for i in range(4): #can list comprehension simplify this?
+                self.enabled[i] = int(byte[i]) == 1
+
+            if self.enabled != self.enabledOld: #only update when something changes
+                self.enabledOld = [i for i in self.enabled]
+
+                if self.numLockPin is not None:
+                    self.numLockLED.value = self.enabled[3]
+
+                if self.capsLockPin is not None:
+                    self.capsLockLED.value = self.enabled[2]
+
+                if self.scrollLockPin is not None:
+                    self.scrollLockLED.value = self.enabled[1]
+
         return
 
     def on_powersave_enable(self, sandbox):
