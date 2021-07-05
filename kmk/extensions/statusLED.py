@@ -11,7 +11,7 @@ class statusLED(Extension):
     ):  
         self.numLockPin = numLockPin
         self.capsLockPin = capsLockPin
-        self.scrollLockPin= scrollLockPin
+        self.scrollLockPin = scrollLockPin
 
         self.enabled = [False] * 4
         self.enabledOld = [False] * 4
@@ -52,12 +52,11 @@ class statusLED(Extension):
             #Second is caps lock
             #Third is scroll lock
             
-            #I don't think this is ideal but it works
+            #I don't think this is ideal but it work
             bits = bin(sandbox.last_received_report[0])[2:]
             byte = '0' * (4 - len(bits)) + bits
             
-            for i in range(4): #can list comprehension simplify this?
-                self.enabled[i] = int(byte[i]) == 1
+            self.enabled = [int(byte[i]) == 1 for i in range(4)]
 
             if self.enabled != self.enabledOld: #only update when something changes
                 self.enabledOld = [i for i in self.enabled]
