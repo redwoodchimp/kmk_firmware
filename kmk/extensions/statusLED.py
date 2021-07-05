@@ -7,15 +7,14 @@ class statusLED(Extension):
         self,
         numLockPin=None,
         capsLockPin=None,
-        scrollLockPin=None,
+        scrollLockPin=None
     ):  
         self.numLockPin = numLockPin
         self.capsLockPin = capsLockPin
         self.scrollLockPin = scrollLockPin
 
-        self.enabled = [False] * 4
-        self.enabledOld = [False] * 4
-        
+        self.enabled = []
+        self.enabledOld = []
 
     def on_runtime_enable(self, sandbox):
         return
@@ -68,8 +67,7 @@ class statusLED(Extension):
                     self.capsLockLED.value = self.enabled[2]
 
                 if self.scrollLockPin is not None:
-                    self.scrollLockLED.value = self.enabled[1]
-
+                    self.scrollLockLED.value = self.enabled[1]            
         return
 
     def on_powersave_enable(self, sandbox):
