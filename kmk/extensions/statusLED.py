@@ -52,7 +52,7 @@ class statusLED(Extension):
             #Second is caps lock
             #Third is scroll lock
             
-            #I don't think this is ideal but it work
+            #I don't think this is ideal but it works
             bits = bin(sandbox.last_received_report[0])[2:]
             byte = '0' * (4 - len(bits)) + bits
             
