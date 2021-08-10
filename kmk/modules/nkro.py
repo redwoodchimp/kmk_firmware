@@ -9,7 +9,7 @@ from kmk.modules import Module
 
 
 class HIDReportSizes:
-    KEYBOARD = 16
+    KEYBOARD = 24
     CONSUMER = 2
 
 

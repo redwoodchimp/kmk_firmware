@@ -19,7 +19,7 @@ supervisor.set_next_stack_limit(4096 + 4096)
 class USBdescriptor:
 
     BITMAP_DESCRIPTOR_REPORT_ID = 7
-    REPORT_BYTES = 16                       # Number to bytes for the USB Descriptor
+    REPORT_BYTES = 24                       # Number to bytes for the USB Descriptor
 
     bitmap_keyboard_descriptor = bytes((
             0x05, 0x01,                     # Usage Page (Generic Desktop),
